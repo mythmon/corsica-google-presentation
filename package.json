@@ -1,0 +1,25 @@
+{
+  "name": "corsica-google-presentation",
+  "version": "0.1.0",
+  "description": "Show Google presentations on Corsica",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mythmon/corsica-google-presentation.git"
+  },
+  "keywords": [
+    "corsica"
+  ],
+  "author": "Mike Cooper <mythmon@gmail.com>",
+  "license": "MPL2",
+  "bugs": {
+    "url": "https://github.com/mythmon/corsica-google-presentation/issues"
+  },
+  "homepage": "https://github.com/mythmon/corsica-google-presentation",
+  "dependencies": {
+    "acorn": "^0.6.0",
+    "cheerio": "^0.17.0",
+    "es6-promises": "^1.0.8",
+    "request": "^2.38.0"
+  }
+}

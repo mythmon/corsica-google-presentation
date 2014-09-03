@@ -25,18 +25,17 @@ module.exports = function(corsica) {
 
     getSlideIds(deckId)
     .then(function(slideIds) {
-      var chosenSlideId;
       var index;
-      if (content.slideId = 'random') {
+      if (slideNum === 'random') {
         index = Math.floor(Math.random() * slideIds.length);
       } else {
-        index = parseInt(choseSlideId);
+        index = parseInt(slideNum);
         if (isNaN(index) || index < 0 || index >= slideIds.length) {
           index = 0;
         }
       }
       console.log('[glide] showing index', index)
-      chosenSlideId = slideIds[index];
+      var chosenSlideId = slideIds[index];
 
       corsica.sendMessage('content', {
         screen: content.screen,

@@ -8,7 +8,6 @@
  *    mythmon
  */
 
-var Promise = require('es6-promises');
 var cheerio = require('cheerio');
 var acorn = require('acorn');
 var acornWalk = require('acorn/util/walk');

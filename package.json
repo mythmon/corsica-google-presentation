@@ -19,7 +19,6 @@
   "dependencies": {
     "acorn": "^0.6.0",
     "cheerio": "^0.17.0",
-    "es6-promises": "^1.0.8",
     "request": "^2.38.0"
   }
 }

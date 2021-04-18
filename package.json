@@ -19,5 +19,8 @@
   "dependencies": {
     "acorn": "^8.1.1",
     "cheerio": "^1.0.0-rc.6"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
   }
 }

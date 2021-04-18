@@ -19,8 +19,8 @@ var embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 function getSlideIds(deckId) {
   var url = embedUrl.replace('{id}', deckId);
 
-  return new Promise(function(resolve, reject) {
-    request.get(url, function(err, response) {
+  return new Promise(function (resolve, reject) {
+    request.get(url, function (err, response) {
       if (err) {
         console.error(err.stack || err.trace || err);
         reject(err);
@@ -29,25 +29,25 @@ function getSlideIds(deckId) {
 
       var $ = cheerio.load(response.body);
       var js = '';
-      $('script').each(function(i, elem) {
+      $('script').each(function (i, elem) {
         js += $(elem).text() + '\n';
       });
       var ast = acorn.parse(js);
       var slideIds = [];
 
       acornWalk.simple(ast, {
-        VariableDeclaration: function(node) {
+        VariableDeclaration: function (node) {
           /* Find variable declarations that assign to a variable called
            * "viewerData", and from it, extract the slide IDs.
            */
           node.declarations
-          .filter(function(decl) { return decl.id.name === 'viewerData'; })
-          .forEach(function(decl) {
+          .filter(function (decl) { return decl.id.name === 'viewerData'; })
+          .forEach(function (decl) {
             decl.init.properties
-            .filter(function(prop) { return prop.key.name === 'docData'; })
-            .forEach(function(prop) {
+            .filter(function (prop) { return prop.key.name === 'docData'; })
+            .forEach(function (prop) {
               prop.value.elements[1].elements
-              .forEach(function(slideData) {
+              .forEach(function (slideData) {
                 slideIds.push(slideData.elements[0].value);
               });
             });
@@ -63,15 +63,15 @@ function getSlideIds(deckId) {
 
 module.exports = {
   getSlideIds,
-  default: function(corsica) {
+  default: function (corsica) {
     request = corsica.request;
 
-    corsica.on('gslide', function(content) {
+    corsica.on('gslide', function (content) {
       var deckId = content.id;
       var slideNum = content.slide || 'random';
 
       getSlideIds(deckId)
-      .then(function(slideIds) {
+      .then(function (slideIds) {
         var index;
         if (slideNum === 'random') {
           index = Math.floor(Math.random() * slideIds.length);
@@ -94,4 +94,3 @@ module.exports = {
     });
   }
 }
-

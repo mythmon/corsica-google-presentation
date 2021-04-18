@@ -10,7 +10,7 @@
 
 const cheerio = require('cheerio');
 const acorn = require('acorn');
-const acornWalk = require('acorn/util/walk');
+const acornWalk = require('acorn-walk');
 
 var request;
 

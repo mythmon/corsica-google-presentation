@@ -58,7 +58,7 @@ function getSlideIds(deckId) {
 
       resolve(slideIds);
     });
-  })
+  });
 }
 
 module.exports = {
@@ -81,7 +81,7 @@ module.exports = {
               index = 0;
             }
           }
-          console.log('[glide] showing index', index)
+          console.log('[glide] showing index', index);
           var chosenSlideId = slideIds[index];
 
           corsica.sendMessage('content', {
@@ -89,8 +89,8 @@ module.exports = {
             type: 'url',
             url: embedUrl.replace('{id}', deckId) + '#slide=id.' + chosenSlideId,
           });
-        })
+        });
       return content;
     });
   }
-}
+};

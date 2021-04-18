@@ -8,9 +8,10 @@
  *    mythmon
  */
 
-var cheerio = require('cheerio');
-var acorn = require('acorn');
-var acornWalk = require('acorn/util/walk');
+const cheerio = require('cheerio');
+const acorn = require('acorn');
+const acornWalk = require('acorn/util/walk');
+
 var request;
 
 var embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';

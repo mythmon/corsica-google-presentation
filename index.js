@@ -16,40 +16,6 @@ var request;
 
 var embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 
-module.exports = {
-  getSlideIds,
-  default: function(corsica) {
-    request = corsica.request;
-
-    corsica.on('gslide', function(content) {
-      var deckId = content.id;
-      var slideNum = content.slide || 'random';
-
-      getSlideIds(deckId)
-      .then(function(slideIds) {
-        var index;
-        if (slideNum === 'random') {
-          index = Math.floor(Math.random() * slideIds.length);
-        } else {
-          index = parseInt(slideNum);
-          if (isNaN(index) || index < 0 || index >= slideIds.length) {
-            index = 0;
-          }
-        }
-        console.log('[glide] showing index', index)
-        var chosenSlideId = slideIds[index];
-
-        corsica.sendMessage('content', {
-          screen: content.screen,
-          type: 'url',
-          url: embedUrl.replace('{id}', deckId) + '#slide=id.' + chosenSlideId,
-        });
-      })
-      return content;
-    });
-  }
-}
-
 function getSlideIds(deckId) {
   var url = embedUrl.replace('{id}', deckId);
 
@@ -94,3 +60,38 @@ function getSlideIds(deckId) {
     });
   })
 }
+
+module.exports = {
+  getSlideIds,
+  default: function(corsica) {
+    request = corsica.request;
+
+    corsica.on('gslide', function(content) {
+      var deckId = content.id;
+      var slideNum = content.slide || 'random';
+
+      getSlideIds(deckId)
+      .then(function(slideIds) {
+        var index;
+        if (slideNum === 'random') {
+          index = Math.floor(Math.random() * slideIds.length);
+        } else {
+          index = parseInt(slideNum);
+          if (isNaN(index) || index < 0 || index >= slideIds.length) {
+            index = 0;
+          }
+        }
+        console.log('[glide] showing index', index)
+        var chosenSlideId = slideIds[index];
+
+        corsica.sendMessage('content', {
+          screen: content.screen,
+          type: 'url',
+          url: embedUrl.replace('{id}', deckId) + '#slide=id.' + chosenSlideId,
+        });
+      })
+      return content;
+    });
+  }
+}
+

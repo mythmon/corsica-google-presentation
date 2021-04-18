@@ -14,10 +14,10 @@ const acornWalk = require('acorn-walk');
 
 let request;
 
-let embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
+const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 
 function getSlideIds(deckId) {
-  let url = embedUrl.replace('{id}', deckId);
+  const url = embedUrl.replace('{id}', deckId);
 
   return new Promise((resolve, reject) => {
     request.get(url, (err, response) => {
@@ -27,13 +27,13 @@ function getSlideIds(deckId) {
         return;
       }
 
-      let $ = cheerio.load(response.body);
+      const $ = cheerio.load(response.body);
       let js = '';
       $('script').each((i, elem) => {
         js += $(elem).text() + '\n';
       });
-      let ast = acorn.parse(js);
-      let slideIds = [];
+      const ast = acorn.parse(js);
+      const slideIds = [];
 
       acornWalk.simple(ast, {
         VariableDeclaration: (node) => {
@@ -66,8 +66,8 @@ module.exports = {
     request = corsica.request;
 
     corsica.on('gslide', (content) => {
-      let deckId = content.id;
-      let slideNum = content.slide || 'random';
+      const deckId = content.id;
+      const slideNum = content.slide || 'random';
 
       getSlideIds(deckId)
         .then((slideIds) => {
@@ -81,7 +81,7 @@ module.exports = {
             }
           }
           console.log('[glide] showing index', index);
-          let chosenSlideId = slideIds[index];
+          const chosenSlideId = slideIds[index];
 
           corsica.sendMessage('content', {
             screen: content.screen,

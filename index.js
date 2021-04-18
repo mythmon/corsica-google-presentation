@@ -41,10 +41,10 @@ function getSlideIds(deckId) {
            * "viewerData", and from it, extract the slide IDs.
            */
           node.declarations
-            .filter((decl) => { return decl.id.name === 'viewerData'; })
+            .filter((decl) => decl.id.name === 'viewerData')
             .forEach((decl) => {
               decl.init.properties
-                .filter((prop) => { return prop.key.name === 'docData'; })
+                .filter((prop) => prop.key.name === 'docData')
                 .forEach((prop) => {
                   prop.value.elements[1].elements
                     .forEach((slideData) => {

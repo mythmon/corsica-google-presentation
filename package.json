@@ -3,6 +3,10 @@
   "version": "0.2.0",
   "description": "Show Google presentations on Corsica",
   "main": "index.js",
+  "scripts": {
+    "lint": "eslint *.js",
+    "test": "./node_modules/.bin/mocha tests.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mythmon/corsica-google-presentation.git"
@@ -21,6 +25,9 @@
     "cheerio": "^1.0.0-rc.6"
   },
   "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "mocha": "^8.3.2"
   }
 }

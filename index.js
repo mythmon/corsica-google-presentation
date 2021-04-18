@@ -12,42 +12,42 @@ const cheerio = require('cheerio');
 const acorn = require('acorn');
 const acornWalk = require('acorn-walk');
 
-var request;
+let request;
 
-var embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
+let embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 
 function getSlideIds(deckId) {
-  var url = embedUrl.replace('{id}', deckId);
+  let url = embedUrl.replace('{id}', deckId);
 
-  return new Promise(function (resolve, reject) {
-    request.get(url, function (err, response) {
+  return new Promise((resolve, reject) => {
+    request.get(url, (err, response) => {
       if (err) {
         console.error(err.stack || err.trace || err);
         reject(err);
         return;
       }
 
-      var $ = cheerio.load(response.body);
-      var js = '';
-      $('script').each(function (i, elem) {
+      let $ = cheerio.load(response.body);
+      let js = '';
+      $('script').each((i, elem) => {
         js += $(elem).text() + '\n';
       });
-      var ast = acorn.parse(js);
-      var slideIds = [];
+      let ast = acorn.parse(js);
+      let slideIds = [];
 
       acornWalk.simple(ast, {
-        VariableDeclaration: function (node) {
+        VariableDeclaration: (node) => {
           /* Find variable declarations that assign to a variable called
            * "viewerData", and from it, extract the slide IDs.
            */
           node.declarations
-            .filter(function (decl) { return decl.id.name === 'viewerData'; })
-            .forEach(function (decl) {
+            .filter((decl) => { return decl.id.name === 'viewerData'; })
+            .forEach((decl) => {
               decl.init.properties
-                .filter(function (prop) { return prop.key.name === 'docData'; })
-                .forEach(function (prop) {
+                .filter((prop) => { return prop.key.name === 'docData'; })
+                .forEach((prop) => {
                   prop.value.elements[1].elements
-                    .forEach(function (slideData) {
+                    .forEach((slideData) => {
                       slideIds.push(slideData.elements[0].value);
                     });
                 });
@@ -65,13 +65,13 @@ module.exports = {
   default: (corsica) => {
     request = corsica.request;
 
-    corsica.on('gslide', function (content) {
-      var deckId = content.id;
-      var slideNum = content.slide || 'random';
+    corsica.on('gslide', (content) => {
+      let deckId = content.id;
+      let slideNum = content.slide || 'random';
 
       getSlideIds(deckId)
-        .then(function (slideIds) {
-          var index;
+        .then((slideIds) => {
+          let index;
           if (slideNum === 'random') {
             index = Math.floor(Math.random() * slideIds.length);
           } else {
@@ -81,7 +81,7 @@ module.exports = {
             }
           }
           console.log('[glide] showing index', index);
-          var chosenSlideId = slideIds[index];
+          let chosenSlideId = slideIds[index];
 
           corsica.sendMessage('content', {
             screen: content.screen,

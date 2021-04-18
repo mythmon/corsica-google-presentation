@@ -62,7 +62,7 @@ function getSlideIds(deckId) {
 
 module.exports = {
   getSlideIds,
-  default: function (corsica) {
+  default: (corsica) => {
     request = corsica.request;
 
     corsica.on('gslide', function (content) {

@@ -41,17 +41,17 @@ function getSlideIds(deckId) {
            * "viewerData", and from it, extract the slide IDs.
            */
           node.declarations
-          .filter(function (decl) { return decl.id.name === 'viewerData'; })
-          .forEach(function (decl) {
-            decl.init.properties
-            .filter(function (prop) { return prop.key.name === 'docData'; })
-            .forEach(function (prop) {
-              prop.value.elements[1].elements
-              .forEach(function (slideData) {
-                slideIds.push(slideData.elements[0].value);
-              });
+            .filter(function (decl) { return decl.id.name === 'viewerData'; })
+            .forEach(function (decl) {
+              decl.init.properties
+                .filter(function (prop) { return prop.key.name === 'docData'; })
+                .forEach(function (prop) {
+                  prop.value.elements[1].elements
+                    .forEach(function (slideData) {
+                      slideIds.push(slideData.elements[0].value);
+                    });
+                });
             });
-          });
 
         },
       });
@@ -71,25 +71,25 @@ module.exports = {
       var slideNum = content.slide || 'random';
 
       getSlideIds(deckId)
-      .then(function (slideIds) {
-        var index;
-        if (slideNum === 'random') {
-          index = Math.floor(Math.random() * slideIds.length);
-        } else {
-          index = parseInt(slideNum);
-          if (isNaN(index) || index < 0 || index >= slideIds.length) {
-            index = 0;
+        .then(function (slideIds) {
+          var index;
+          if (slideNum === 'random') {
+            index = Math.floor(Math.random() * slideIds.length);
+          } else {
+            index = parseInt(slideNum);
+            if (isNaN(index) || index < 0 || index >= slideIds.length) {
+              index = 0;
+            }
           }
-        }
-        console.log('[glide] showing index', index)
-        var chosenSlideId = slideIds[index];
+          console.log('[glide] showing index', index)
+          var chosenSlideId = slideIds[index];
 
-        corsica.sendMessage('content', {
-          screen: content.screen,
-          type: 'url',
-          url: embedUrl.replace('{id}', deckId) + '#slide=id.' + chosenSlideId,
-        });
-      })
+          corsica.sendMessage('content', {
+            screen: content.screen,
+            type: 'url',
+            url: embedUrl.replace('{id}', deckId) + '#slide=id.' + chosenSlideId,
+          });
+        })
       return content;
     });
   }

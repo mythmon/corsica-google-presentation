@@ -86,7 +86,7 @@ module.exports = {
           corsica.sendMessage('content', {
             screen: content.screen,
             type: 'url',
-            url: embedUrl.replace('{id}', deckId) + '#slide=id.' + chosenSlideId,
+            url: `${embedUrl.replace('{id}', deckId)}#slide=id.${chosenSlideId}`,
           });
         });
       return content;

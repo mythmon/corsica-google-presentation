@@ -68,7 +68,7 @@ function getSlideIds(deckId) {
  */
  function slideChooser(strategy) {
   if (strategy === 'random') {
-    return (arr) => { return arr[Math.floor(Math.random() * arr.length)] };
+    return (arr) => { arr[Math.floor(Math.random() * arr.length)] };
   }
   let index = Number.parseInt(slideNum);
   if (Number.isNaN(index) || index < 0) {

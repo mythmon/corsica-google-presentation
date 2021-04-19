@@ -12,8 +12,6 @@ const cheerio = require('cheerio');
 const acorn = require('acorn');
 const acornWalk = require('acorn-walk');
 
-let request;
-
 const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 
 function getSlideIds(deckId) {
@@ -57,41 +55,39 @@ function getSlideIds(deckId) {
   });
 }
 
-function computeSlideIndex(slideNum, totalSlides) {
-  if (slideNum === 'random') {
-    return Math.floor(Math.random() * totalSlides);
+/**
+ * returns a function that returns a single element from an array. the strategy
+ * for choosing that function may be the string 'random' or an integer indicating
+ * the array position to choose. If the strategy is unexpected or negative it
+ * will try to pull the first item. If the array is too small the func will
+ * return undefined.
+ *
+ * @param {String|Integer} strategy either 'random' or a positive integer
+ * @returns {Function(String):String} return a function that selects a single
+ * element from an array-like object
+ */
+ function slideChooser(strategy) {
+  if (strategy === 'random') {
+    return (arr) => { return arr[Math.floor(Math.random() * arr.length)] };
   }
   let index = Number.parseInt(slideNum);
-  if (Number.isNaN(index) || index < 0 || index >= totalSlides) {
-    return 0;
+  if (Number.isNaN(index) || index < 0) {
+    index = 0;
   }
-  return index;
-}
-
-function computeSlideUrl(slideIds) {
-
-  let index = computeSlideIndex(slideNum, slideIds.length);
-
-  const chosenSlideId = slideIds[index];
-
-  const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
-
-  return Promise.new(`${embedUrl.replace('{id}', deckId)}#slide=id.${chosenSlideId}`);
+  return (arr) => { arr[index] };
 }
 
 module.exports = {
-  computeSlideIndex,
-  computeSlideUrl,
-  getSlideIds,
   default: (corsica) => {
     const request = corsica.request;
 
     corsica.on('gslide', (content) => {
-      const deckId = content.id;
+      const deck = content.id;
       const slideNum = content.slide || 'random';
 
-      getSlideIds(deckId)
-        .then(computeSlideUrl)
+      getSlideIds(deck)
+        .then(slideChooser(slideNum))
+        .then(buildSlideURL)
         .then((slideUrl) => {
           corsica.sendMessage('content', {
             screen: content.screen,

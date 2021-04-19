@@ -30,7 +30,7 @@ function getSlideIds(deckId) {
       const $ = cheerio.load(response.body);
       let js = '';
       $('script').each((i, elem) => {
-        js += $(elem).text() + '\n';
+        js = `${js}${$(elem).text()}\n`;
       });
       const ast = acorn.parse(js);
       const slideIds = [];

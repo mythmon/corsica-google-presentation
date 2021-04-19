@@ -95,6 +95,9 @@ function buildSlideURL(deckID) {
 }
 
 module.exports = {
+  buildSlideURL,
+  getSlideIds,
+  slideChooser,
   default: (corsica) => {
     const request = corsica.request;
 

@@ -76,7 +76,7 @@ module.exports = {
             index = Math.floor(Math.random() * slideIds.length);
           } else {
             index = parseInt(slideNum);
-            if (isNaN(index) || index < 0 || index >= slideIds.length) {
+            if (Number.isNaN(index) || index < 0 || index >= slideIds.length) {
               index = 0;
             }
           }

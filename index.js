@@ -19,77 +19,87 @@ const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 function getSlideIds(deckId) {
   const url = embedUrl.replace('{id}', deckId);
 
-  return new Promise((resolve, reject) => {
-    request.get(url, (err, response) => {
-      if (err) {
-        console.error(err.stack || err.trace || err);
-        reject(err);
-        return;
-      }
+  request.get(url, (err, response) => {
+    if (err) {
+      console.error(err.stack || err.trace || err);
+      return Promise.reject(err);
+    }
 
-      const $ = cheerio.load(response.body);
-      let js = '';
-      $('script').each((i, elem) => {
-        js = `${js}${$(elem).text()}\n`;
-      });
-      const ast = acorn.parse(js);
-      const slideIds = [];
-
-      acornWalk.simple(ast, {
-        VariableDeclaration: (node) => {
-          /* Find variable declarations that assign to a variable called
-           * "viewerData", and from it, extract the slide IDs.
-           */
-          node.declarations
-            .filter((decl) => decl.id.name === 'viewerData')
-            .forEach((decl) => {
-              decl.init.properties
-                .filter((prop) => prop.key.name === 'docData')
-                .forEach((prop) => {
-                  prop.value.elements[1].elements
-                    .forEach((slideData) => {
-                      slideIds.push(slideData.elements[0].value);
-                    });
-                });
-            });
-        },
-      });
-
-      resolve(slideIds);
+    const $ = cheerio.load(response.body);
+    let js = '';
+    $('script').each((i, elem) => {
+      js = `${js}${$(elem).text()}\n`;
     });
+    const ast = acorn.parse(js);
+    const slideIds = [];
+
+    acornWalk.simple(ast, {
+      VariableDeclaration: (node) => {
+        /* Find variable declarations that assign to a variable called
+          * "viewerData", and from it, extract the slide IDs.
+          */
+        node.declarations
+          .filter((decl) => decl.id.name === 'viewerData')
+          .forEach((decl) => {
+            decl.init.properties
+              .filter((prop) => prop.key.name === 'docData')
+              .forEach((prop) => {
+                prop.value.elements[1].elements
+                  .forEach((slideData) => {
+                    slideIds.push(slideData.elements[0].value);
+                  });
+              });
+          });
+      },
+    });
+
+    return Promise.resolve(slideIds);
   });
 }
 
+function computeSlideIndex(slideNum, totalSlides) {
+  if (slideNum === 'random') {
+    return Math.floor(Math.random() * totalSlides);
+  }
+  let index = Number.parseInt(slideNum);
+  if (Number.isNaN(index) || index < 0 || index >= totalSlides) {
+    return 0;
+  }
+  return index;
+}
+
+function computeSlideUrl(slideIds) {
+
+  let index = computeSlideIndex(slideNum, slideIds.length);
+
+  const chosenSlideId = slideIds[index];
+
+  const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
+
+  return Promise.new(`${embedUrl.replace('{id}', deckId)}#slide=id.${chosenSlideId}`);
+}
+
 module.exports = {
+  computeSlideIndex,
+  computeSlideUrl,
   getSlideIds,
   default: (corsica) => {
-    request = corsica.request;
+    const request = corsica.request;
 
     corsica.on('gslide', (content) => {
       const deckId = content.id;
       const slideNum = content.slide || 'random';
 
       getSlideIds(deckId)
-        .then((slideIds) => {
-          let index;
-          if (slideNum === 'random') {
-            index = Math.floor(Math.random() * slideIds.length);
-          } else {
-            index = Number.parseInt(slideNum);
-            if (Number.isNaN(index) || index < 0 || index >= slideIds.length) {
-              index = 0;
-            }
-          }
-          console.log('[glide] showing index', index);
-          const chosenSlideId = slideIds[index];
-
+        .then(computeSlideUrl)
+        .then((slideUrl) => {
           corsica.sendMessage('content', {
             screen: content.screen,
             type: 'url',
-            url: `${embedUrl.replace('{id}', deckId)}#slide=id.${chosenSlideId}`,
+            url: slideUrl,
           });
         });
-      return content;
+      return Promise.resolve(content);
     });
   },
 };

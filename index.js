@@ -77,6 +77,23 @@ function getSlideIds(deckId) {
   return (arr) => { arr[index] };
 }
 
+/**
+ * This provides a way build the context necessary to get a slide URL. We need
+ * both the deck, which is known early, and the slide id, which is determined in
+ * the process chain.
+ *
+ * @param {String} deckID the ID of the google presentation deck
+ * @returns {Function(String):String} return a function that takes the slideID
+ * and returns the full URL for that deck and slide combination
+ */
+function buildSlideURL(deckID) {
+  return (slideID) => {
+    const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
+
+    return `${embedUrl.replace('{id}', deckId)}#slide=id.${slideID}`;
+  };
+}
+
 module.exports = {
   default: (corsica) => {
     const request = corsica.request;

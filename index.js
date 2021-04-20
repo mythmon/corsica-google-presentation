@@ -69,7 +69,7 @@ function getSlideIds(deckId) {
  * @returns {Function(String):String} return a function that selects a single
  * element from an array-like object
  */
- function slideChooser(strategy) {
+function slideChooser(strategy) {
   if (strategy === 'random') {
     return (arr) => arr[Math.floor(Math.random() * arr.length)];
   }
@@ -90,11 +90,7 @@ function getSlideIds(deckId) {
  * and returns the full URL for that deck and slide combination
  */
 function buildSlideURL(deckID) {
-  return (slideID) => {
-    const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
-
-    return `${embedUrl.replace('{id}', deckId)}#slide=id.${slideID}`;
-  };
+  return (slideID) => `${embedUrl.replace('{id}', deckID)}#slide=id.${slideID}`;
 }
 
 module.exports = {

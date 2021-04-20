@@ -17,7 +17,7 @@ describe('the non-corsica business logic', () => {
   });
 
   it('should try to choose the numbered slide, but safely choose 0 if things get weird', () => {
-    let values = [10, 20, 30, 40, 50];
+    const values = [10, 20, 30, 40, 50];
 
     for (let i = 0; i < values.length; i++) {
       chosenItem = slideChooser(i)(values);

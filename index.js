@@ -14,6 +14,9 @@ const acornWalk = require('acorn-walk');
 
 const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
 
+// eslint-disable-next-line no-var
+var request;
+
 function getSlideIds(deckId) {
   const url = embedUrl.replace('{id}', deckId);
 
@@ -68,13 +71,13 @@ function getSlideIds(deckId) {
  */
  function slideChooser(strategy) {
   if (strategy === 'random') {
-    return (arr) => { return arr[Math.floor(Math.random() * arr.length)] };
+    return (arr) => arr[Math.floor(Math.random() * arr.length)];
   }
-  let index = Number.parseInt(slideNum);
+  let index = Number.parseInt(strategy);
   if (Number.isNaN(index) || index < 0) {
     index = 0;
   }
-  return (arr) => { arr[index] };
+  return (arr) => arr[index];
 }
 
 /**
@@ -99,7 +102,7 @@ module.exports = {
   getSlideIds,
   slideChooser,
   default: (corsica) => {
-    const request = corsica.request;
+    request = corsica.request;
 
     corsica.on('gslide', (content) => {
       const deck = content.id;

@@ -36,4 +36,15 @@ describe('the non-corsica business logic', () => {
     assert.strictEqual(values.indexOf(chosenItem), 0);
     assert.strictEqual(chosenItem, 10);
   });
+
+  it('should build a valid url', () => {
+    assert.strictEqual(
+      buildSlideURL(corsicaDemoPresentationDeckID)('id.g7e85c7fed4_1_36'),
+      'https://docs.google.com/presentation/d/1_RWJt6XslTBeB04XjYJk71mM7DR49YKDVmZc5ZlWwUo/embed#slide=id.id.g7e85c7fed4_1_36',
+    );
+  });
+
+  it('should choose a valid random index', () => {
+    getSlideIds;
+  });
 });

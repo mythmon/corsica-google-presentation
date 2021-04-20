@@ -12,5 +12,6 @@ module.exports = {
   },
   rules: {
     radix: 0,
+    'no-console': 0,
   },
 };

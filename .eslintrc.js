@@ -11,6 +11,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'eslint-disable': 'radix',
+    radix: 0,
   },
 };

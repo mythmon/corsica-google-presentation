@@ -23,7 +23,8 @@
   "dependencies": {
     "acorn": "^8.1.1",
     "acorn-walk": "^8.0.2",
-    "cheerio": "^1.0.0-rc.6"
+    "cheerio": "^1.0.0-rc.6",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "eslint": "^7.24.0",

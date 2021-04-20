@@ -9,7 +9,8 @@ describe('the non-corsica business logic', () => {
   it('should choose a valid random index', () => {
     let values = [10, 20, 30, 40, 50];
     // random slides
-    for (let i = 0; i < 10; i++) {
+    let chosenItem = 0;
+    for (let i = 0; i < 10; i += 1) {
       chosenItem = slideChooser('random')(values);
       assert.ok(values.indexOf(chosenItem) >= 0);
       assert.ok(values.indexOf(chosenItem) < 5);
@@ -18,8 +19,8 @@ describe('the non-corsica business logic', () => {
 
   it('should try to choose the numbered slide, but safely choose 0 if things get weird', () => {
     const values = [10, 20, 30, 40, 50];
-
-    for (let i = 0; i < values.length; i++) {
+    let chosenItem = 0;
+    for (let i = 0; i < values.length; i += 1) {
       chosenItem = slideChooser(i)(values);
       assert.strictEqual(values.indexOf(chosenItem), i);
       assert.strictEqual(chosenItem, i*10);

@@ -1,6 +1,6 @@
 {
   "name": "corsica-google-presentation",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "description": "Show Google presentations on Corsica",
   "main": "index.js",
   "scripts": {

@@ -1,10 +1,12 @@
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable func-names */
 const assert = require('assert');
 const { describe, it } = require('mocha');
 
 const { slideChooser, buildSlideURL, getSlideIds } = require('.');
 
 const corsicaDemoPresentationDeckID = '1_RWJt6XslTBeB04XjYJk71mM7DR49YKDVmZc5ZlWwUo';
-const corsicaDemoSlideID = 'id.g7e85c7fed4_1_36';
+const corsicaDemoSlideIDs = ['g7e85c7fed4_1_36', 'g715e31125c_0_0', 'g7134ada0df_0_0'];
 
 describe('the non-corsica business logic', () => {
   it('should choose a valid random index', () => {
@@ -40,12 +42,23 @@ describe('the non-corsica business logic', () => {
 
   it('should build a valid url', () => {
     assert.strictEqual(
-      buildSlideURL(corsicaDemoPresentationDeckID)(corsicaDemoSlideID),
-      'https://docs.google.com/presentation/d/1_RWJt6XslTBeB04XjYJk71mM7DR49YKDVmZc5ZlWwUo/embed#slide=id.id.g7e85c7fed4_1_36',
+      buildSlideURL(corsicaDemoPresentationDeckID)(corsicaDemoSlideIDs[0]),
+      'https://docs.google.com/presentation/d/1_RWJt6XslTBeB04XjYJk71mM7DR49YKDVmZc5ZlWwUo/embed#slide=id.g7e85c7fed4_1_36',
     );
   });
 
-  it('should choose a valid random index', () => {
-    getSlideIds;
+  it('should get the ID of each slide given a deckID', (done) => {
+    getSlideIds(corsicaDemoPresentationDeckID)
+      .then(function (slides) {
+        const truthiness = [];
+        slides.forEach((slide) => {
+          truthiness.push(corsicaDemoSlideIDs.indexOf(slide) >= 0);
+        });
+        assert.ok(truthiness.every((t) => t));
+        done();
+      })
+      .catch(function (err) {
+        done(err);
+      });
   });
 });

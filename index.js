@@ -11,51 +11,53 @@
 const cheerio = require('cheerio');
 const acorn = require('acorn');
 const acornWalk = require('acorn-walk');
+const fetch = require('node-fetch');
 
 const embedUrl = 'https://docs.google.com/presentation/d/{id}/embed';
-
-// eslint-disable-next-line no-var
-var request;
 
 function getSlideIds(deckId) {
   const url = embedUrl.replace('{id}', deckId);
 
-  request.get(url, (err, response) => {
-    if (err) {
+  return fetch(url)
+    .then((response) => response.text())
+    .then((body) => {
+      const $ = cheerio.load(body);
+      const slideIds = [];
+      $('script').each((i, elem) => {
+        if (!elem
+          || !elem.children
+          || elem.children.length < 1
+          || !elem.children[0].data) {
+          // || elem.children[0].data.indexOf('docData') === -1) {
+          return;
+        }
+        acornWalk.simple(acorn.parse(elem.children[0].data, { ecmaVersion: 2020 }),
+          {
+            VariableDeclaration: (node) => {
+              /* Find variable declarations that assign to a variable called
+              * "viewerData", and from it, extract the slide IDs.
+              */
+              node.declarations
+                .filter((decl) => decl.id.name === 'viewerData')
+                .forEach((decl) => {
+                  decl.init.properties
+                    .filter((prop) => prop.key.name === 'docData')
+                    .forEach((prop) => {
+                      prop.value.elements[1].elements
+                        .forEach((slideData) => {
+                          slideIds.push(slideData.elements[0].value);
+                        });
+                    });
+                });
+            },
+          });
+      });
+      return slideIds;
+    })
+    .catch((err) => {
       console.error(err.stack || err.trace || err);
       return Promise.reject(err);
-    }
-
-    const $ = cheerio.load(response.body);
-    let js = '';
-    $('script').each((i, elem) => {
-      js = `${js}${$(elem).text()}\n`;
     });
-    const ast = acorn.parse(js);
-    const slideIds = [];
-
-    acornWalk.simple(ast, {
-      VariableDeclaration: (node) => {
-        /* Find variable declarations that assign to a variable called
-          * "viewerData", and from it, extract the slide IDs.
-          */
-        node.declarations
-          .filter((decl) => decl.id.name === 'viewerData')
-          .forEach((decl) => {
-            decl.init.properties
-              .filter((prop) => prop.key.name === 'docData')
-              .forEach((prop) => {
-                prop.value.elements[1].elements
-                  .forEach((slideData) => {
-                    slideIds.push(slideData.elements[0].value);
-                  });
-              });
-          });
-      },
-    });
-
-    return Promise.resolve(slideIds);
-  });
 }
 
 /**
@@ -98,8 +100,6 @@ module.exports = {
   getSlideIds,
   slideChooser,
   default: (corsica) => {
-    request = corsica.request;
-
     corsica.on('gslide', (content) => {
       const deck = content.id;
       const slideNum = content.slide || 'random';

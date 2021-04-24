@@ -1,8 +1,12 @@
 {
   "name": "corsica-google-presentation",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "description": "Show Google presentations on Corsica",
   "main": "index.js",
+  "scripts": {
+    "lint": "eslint *.js",
+    "test": "./node_modules/.bin/mocha tests.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mythmon/corsica-google-presentation.git"
@@ -17,9 +21,15 @@
   },
   "homepage": "https://github.com/mythmon/corsica-google-presentation",
   "dependencies": {
-    "acorn": "^0.6.0",
-    "cheerio": "^0.17.0",
-    "es6-promises": "^1.0.8",
-    "request": "^2.38.0"
+    "acorn": "^8.1.1",
+    "acorn-walk": "^8.0.2",
+    "cheerio": "^1.0.0-rc.6",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.3.2"
   }
 }

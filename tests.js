@@ -3,10 +3,17 @@
 const assert = require('assert');
 const { describe, it } = require('mocha');
 
-const { slideChooser, buildSlideURL, getSlideIds } = require('.');
+const { slideChooser, buildSlideURL, getSlideIds } = require('./impl');
+const corsicaGooglePresentation = require('.');
 
 const corsicaDemoPresentationDeckID = '1_RWJt6XslTBeB04XjYJk71mM7DR49YKDVmZc5ZlWwUo';
 const corsicaDemoSlideIDs = ['g7e85c7fed4_1_36', 'g715e31125c_0_0', 'g7134ada0df_0_0'];
+
+describe('corsica expects things about this module', () => {
+  it('should export as a function', () => {
+    assert.strictEqual(typeof corsicaGooglePresentation, 'function');
+  });
+});
 
 describe('the non-corsica business logic', () => {
   it('should choose a valid random index', () => {

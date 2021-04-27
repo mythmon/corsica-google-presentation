@@ -17,7 +17,7 @@ module.exports = (corsica) => {
 
     getSlideIds(deck)
       .then(slideChooser(slideNum))
-      .then(buildSlideURL)
+      .then(buildSlideURL(deck))
       .then((slideUrl) => {
         corsica.sendMessage('content', {
           screen: content.screen,
